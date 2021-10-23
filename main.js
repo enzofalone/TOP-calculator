@@ -4,7 +4,7 @@ let isEmpty = true;
 
 let firstOperand = "";
 let secondOperand = "";
-let desiredOperator = null;
+let desiredOperator = "";
 let display = document.querySelector(".display");
 
 function displayNew(val) {
@@ -31,11 +31,12 @@ function displayResult(val) {
     display.innerHTML = val;
 }
 
+//numbers button
 numbers = document.querySelectorAll(".number");
 
 numbers.forEach(e => {
     e.addEventListener("click", (i) => {
-        if (desiredOperator === null) {
+        if (desiredOperator === "") {
             if ((firstOperand === "") && (e.innerHTML === "0")) { } //do nothing. this would just be an insignificant number and its the shortest way to fix this input
             else {
                 firstOperand += e.innerHTML;
@@ -70,13 +71,24 @@ operators.forEach(e => {
 //reverse button
 let reverseButton = document.querySelector("#reverse").addEventListener("click", (e) => {
     operate(display.innerHTML, -1, "multiply");
-}) 
+});
 
 //equal button
 let equalButton = document.querySelector("#equal").addEventListener("click", (e) => {
     if((firstOperand !== "") && (secondOperand !== "")) {
         operate(firstOperand, secondOperand, desiredOperator);
     }
+});
+
+//dot/decimal button
+let dotButton = document.querySelector("#dot").addEventListener("click", (e) => {
+    if(desiredOperator !== "") {
+        secondOperand += ".";
+    } else {
+        firstOperand += ".";
+    }
+    displayNew(".");
+    console.log("dot");
 });
 
 function operate(operand1, operand2, operator) {
