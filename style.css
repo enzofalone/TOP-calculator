@@ -33,6 +33,7 @@ body {
     align-items: center;
     justify-content: center;
     border-radius: 5px;
+    transition: background-color 100ms linear; 
 }
 
 .button:hover {
@@ -42,4 +43,18 @@ body {
 #zero {
     grid-column-start: 1;
     grid-column-end: 3;
+}
+
+.button-click {
+    animation: button-click 1s forwards;
+}
+
+@keyframes button-click {
+    0% {
+        background-color: blue;
+    }
+
+    100% {
+        background-color: gray;
+    }
 }
