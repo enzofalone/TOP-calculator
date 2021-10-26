@@ -90,6 +90,7 @@ numbers.forEach(e => {
         if (desiredOperator === "") {
             if ((firstOperand === "") && (e.innerHTML === "0")) {} //do nothing. this would just be an insignificant number and its the shortest way to fix this input
             else {
+                isEmpty = false;
                 firstOperand += e.innerHTML;
                 console.log("first operand: " + firstOperand);
                 displayNew(firstOperand);
