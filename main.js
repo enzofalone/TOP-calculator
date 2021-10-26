@@ -178,7 +178,12 @@ let percentageButton = document.querySelector("#percentage").addEventListener("c
 //dot/decimal button
 let dotButton = document.querySelector("#dot").addEventListener("click", (e) => {
     if ((desiredOperator !== "") && (dotExistOpTwo === false)) {
-        secondOperand += ".";
+        if(firstResultDisplay) {
+            secondOperand = ".";
+            firstResultDisplay = false;
+        } else {
+            secondOperand += ".";
+        }
         dotExistOpTwo = true;
         console.log("dot2");
         
