@@ -9,9 +9,6 @@ let firstResultDisplay = false;
 
 let display = document.querySelector(".display");
 
-//placeholder
-let resultVal = "";
-
 //main variables used for calculations
 let firstOperand = "";
 let secondOperand = "";
@@ -73,16 +70,12 @@ function resetDisplay() {
 function displayResult(val) {
     firstOperand = val; //let the first operand be the result so the user can keep inputting more operations
 
-    if(secondOperand !== secondOperandPrevious) {
-        secondOperandPrevious = secondOperand;
-    }
-    secondOperand = "";
-
+    console.log("val:" + val);
     //desiredOperator = "";
     display.innerHTML = val;
 
-    resultVal = val;
     firstResultDisplay = true;
+    console.log("result!");
 }
 
 //numbers button
@@ -90,19 +83,29 @@ numbers = document.querySelectorAll(".number");
 
 numbers.forEach(e => {
     e.addEventListener("click", (i) => {
+        
         //e.classList.add("button-click")
         if (desiredOperator === "") {
             if ((firstOperand === "") && (e.innerHTML === "0")) {} //do nothing. this would just be an insignificant number and its the shortest way to fix this input
             else {
                 firstOperand += e.innerHTML;
                 console.log("first operand: " + firstOperand);
+                displayNew(firstOperand);
             }
         } else {
+            if(firstResultDisplay) {
+                firstResultDisplay = false;
+                secondOperand = "";
+                
+                //horrible fix
+                display.innerHTML = "";
+            }
             secondOperand += e.innerHTML;
             console.log("second operand: " + secondOperand);
+            displayNew(secondOperand);
         }
 
-        displayNew(e.innerHTML);
+        
     });
 });
 
@@ -114,7 +117,14 @@ operators.forEach(e => {
     e.addEventListener("click", () => {
         console.log(isEmpty);
         if (!isEmpty) {
-            if(desiredOperatorPrevious !== undefined){
+
+
+            if (firstResultDisplay) {
+                firstResultDisplay = false;
+                secondOperand = "";
+            }
+
+            if (desiredOperatorPrevious !== undefined) {
                 let desOpElement = document.querySelector("#" + desiredOperatorPrevious);
                 desOpElement.style.backgroundColor = "gray";
             }
@@ -147,12 +157,7 @@ let reverseButton = document.querySelector("#reverse").addEventListener("click",
 let equalButton = document.querySelector("#equal").addEventListener("click", (e) => {
     if ((firstOperand !== "") && (secondOperand !== "")) {
         operate(firstOperand, secondOperand, desiredOperator);
-    } else if (secondOperand === secondOperandPrevious) {
-        operate(firstOperand, secondOperandPrevious, desiredOperator);
     }
-
-    //keep using old second operand if equal button is used without any new input
-
 });
 
 //percentage button
