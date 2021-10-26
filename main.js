@@ -21,6 +21,9 @@ let desiredOperator = "";
 let desiredOperatorPrevious //placeholder variable to check last operator in order to manage animations
 let desiredOperatorElement;
 
+//dot control
+let dotExistOpOne = false;
+let dotExistOpTwo = false;
 
 //this variable is going to control whether or not the screen should be cleared in order to input the second operand
 let afterOperator = false;
@@ -38,15 +41,14 @@ function displayNew(val) {
                 display.innerHTML = val;
                 firstResultDisplay = false;
             } else {
-                display.innerHTML += val;
+                display.innerHTML = val;
             }
         }
     } else {
         afterOperator = false;
-
         display.innerHTML = val;
     }
-
+    
     ac.innerHTML = "C";
 }
 
@@ -61,17 +63,17 @@ function resetDisplay() {
     firstOperand = "";
     secondOperand = "";
     desiredOperator = "";
+    desiredOperatorPrevious = undefined;
     display.innerHTML = "0";
     isEmpty = true;
-
+    dotExistOpOne = false;
+    dotExistOpTwo = false;
     ac.innerHTML = "AC";
 }
 
 function displayResult(val) {
     firstOperand = val; //let the first operand be the result so the user can keep inputting more operations
 
-    console.log("val:" + val);
-    //desiredOperator = "";
     display.innerHTML = val;
 
     firstResultDisplay = true;
@@ -96,7 +98,7 @@ numbers.forEach(e => {
             if(firstResultDisplay) {
                 firstResultDisplay = false;
                 secondOperand = "";
-                
+                dotExistOpTwo = false;
                 //horrible fix
                 display.innerHTML = "";
             }
@@ -109,27 +111,32 @@ numbers.forEach(e => {
     });
 });
 
-
-
 //operators button
 let operators = document.querySelectorAll(".operator");
 operators.forEach(e => {
     e.addEventListener("click", () => {
         console.log(isEmpty);
         if (!isEmpty) {
+            desiredOperator = e.id;
 
-
-            if (firstResultDisplay) {
+            /*if (firstResultDisplay) {
                 firstResultDisplay = false;
                 secondOperand = "";
-            }
+                dotExistOpTwo = false;
+                console.log("hola")
+            }*/
 
             if (desiredOperatorPrevious !== undefined) {
                 let desOpElement = document.querySelector("#" + desiredOperatorPrevious);
                 desOpElement.style.backgroundColor = "gray";
             }
+            
+            if(desiredOperatorPrevious !== desiredOperator) {
+                operate(firstOperand, secondOperand, desiredOperatorPrevious);
+            }
 
-            desiredOperator = e.id;
+            secondOperand = "";
+            dotExistOpTwo = false;
 
             desiredOperatorElement = document.querySelector("#" + e.id);
             desiredOperatorElement.style.backgroundColor = "indigo"; //placeholder color (no palette atm)
@@ -169,13 +176,20 @@ let percentageButton = document.querySelector("#percentage").addEventListener("c
 
 //dot/decimal button
 let dotButton = document.querySelector("#dot").addEventListener("click", (e) => {
-    if (desiredOperator !== "") {
+    if ((desiredOperator !== "") && (dotExistOpTwo === false)) {
         secondOperand += ".";
-    } else {
+        dotExistOpTwo = true;
+        console.log("dot2");
+        
+        displayNew(secondOperand);
+    } else if(dotExistOpOne === false){
         firstOperand += ".";
+        dotExistOpOne = true;
+        console.log("dot1");
+        
+        displayNew(firstOperand);
     }
-    displayNew(".");
-    console.log("dot");
+    //displayNew(".");
 });
 
 //function that is in charge of sending different parameters to the displayResult function with the desired calculations
