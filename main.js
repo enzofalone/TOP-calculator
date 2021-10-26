@@ -131,7 +131,7 @@ operators.forEach(e => {
                 desOpElement.style.backgroundColor = "gray";
             }
             
-            if(desiredOperatorPrevious !== desiredOperator) {
+            if(/*(desiredOperatorPrevious !== desiredOperator) && */(secondOperand !== "")) {
                 operate(firstOperand, secondOperand, desiredOperatorPrevious);
             }
 
