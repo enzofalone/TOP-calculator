@@ -15,10 +15,13 @@ let resultVal = "";
 //main variables used for calculations
 let firstOperand = "";
 let secondOperand = "";
+
+//equal button feature 
+let secondOperandPrevious = "";
+
+//desired operator variables
 let desiredOperator = "";
-
 let desiredOperatorPrevious //placeholder variable to check last operator in order to manage animations
-
 let desiredOperatorElement;
 
 
@@ -52,9 +55,10 @@ function displayNew(val) {
 
 //Function in charge of clearing the display and variables
 function resetDisplay() {
-    if(desiredOperatorElement !== undefined) {
+    if (desiredOperatorElement !== undefined) {
         desiredOperatorElement = document.querySelector("#" + desiredOperator);
         desiredOperatorElement.style.backgroundColor = "gray";
+        desiredOperatorElement = undefined;
     }
 
     firstOperand = "";
@@ -68,7 +72,12 @@ function resetDisplay() {
 
 function displayResult(val) {
     firstOperand = val; //let the first operand be the result so the user can keep inputting more operations
+
+    if(secondOperand !== secondOperandPrevious) {
+        secondOperandPrevious = secondOperand;
+    }
     secondOperand = "";
+
     //desiredOperator = "";
     display.innerHTML = val;
 
@@ -83,7 +92,7 @@ numbers.forEach(e => {
     e.addEventListener("click", (i) => {
         //e.classList.add("button-click")
         if (desiredOperator === "") {
-            if ((firstOperand === "") && (e.innerHTML === "0")) { } //do nothing. this would just be an insignificant number and its the shortest way to fix this input
+            if ((firstOperand === "") && (e.innerHTML === "0")) {} //do nothing. this would just be an insignificant number and its the shortest way to fix this input
             else {
                 firstOperand += e.innerHTML;
                 console.log("first operand: " + firstOperand);
@@ -105,14 +114,20 @@ operators.forEach(e => {
     e.addEventListener("click", () => {
         console.log(isEmpty);
         if (!isEmpty) {
+            if(desiredOperatorPrevious !== undefined){
+                let desOpElement = document.querySelector("#" + desiredOperatorPrevious);
+                desOpElement.style.backgroundColor = "gray";
+            }
+
             desiredOperator = e.id;
 
             desiredOperatorElement = document.querySelector("#" + e.id);
-            desiredOperatorElement.style.backgroundColor = "indigo";//placeholder color (no palette atm)
-            
-            afterOperator = true; //variable set true in order to clear the display just when inputting the second operand
-        }
+            desiredOperatorElement.style.backgroundColor = "indigo"; //placeholder color (no palette atm)
 
+            desiredOperatorPrevious = desiredOperator;
+
+            afterOperator = true; //variable set true in order to clear the display when inputting the second operand
+        }
     });
 });
 
@@ -132,12 +147,12 @@ let reverseButton = document.querySelector("#reverse").addEventListener("click",
 let equalButton = document.querySelector("#equal").addEventListener("click", (e) => {
     if ((firstOperand !== "") && (secondOperand !== "")) {
         operate(firstOperand, secondOperand, desiredOperator);
+    } else if (secondOperand === secondOperandPrevious) {
+        operate(firstOperand, secondOperandPrevious, desiredOperator);
     }
 
     //keep using old second operand if equal button is used without any new input
-    if (firstResultDisplay) {
-        operate()
-    }
+
 });
 
 //percentage button
