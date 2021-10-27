@@ -1,3 +1,7 @@
+//style constants
+const BUTTON_INACTIVE_COLOR = "gray";
+const BUTTON_ACTIVE_COLOR = "indigo";
+
 let displayValue;
 let intValue;
 //isEmpty works to remove the initial 0 calculators have. Only used on AC frequently and at startup
@@ -28,6 +32,9 @@ let dotExistOpTwo = false;
 //this variable is going to control whether or not the screen should be cleared in order to input the second operand
 let afterOperator = false;
 
+//variable that helps us check if the equal button was pressed(necessary as pressing an operator triggers the displayResult function)
+let eqButtonPressed = false;
+
 //elements
 let ac = document.querySelector("#ac");
 
@@ -48,7 +55,7 @@ function displayNew(val) {
         afterOperator = false;
         display.innerHTML = val;
     }
-    
+
     ac.innerHTML = "C";
 }
 
@@ -56,7 +63,7 @@ function displayNew(val) {
 function resetDisplay() {
     if (desiredOperatorElement !== undefined) {
         desiredOperatorElement = document.querySelector("#" + desiredOperator);
-        desiredOperatorElement.style.backgroundColor = "gray";
+        desiredOperatorElement.style.backgroundColor = BUTTON_INACTIVE_COLOR;
         desiredOperatorElement = undefined;
     }
 
@@ -85,7 +92,7 @@ numbers = document.querySelectorAll(".number");
 
 numbers.forEach(e => {
     e.addEventListener("click", (i) => {
-        
+        eqButtonPressed = false;
         //e.classList.add("button-click")
         if (desiredOperator === "") {
             if ((firstOperand === "") && (e.innerHTML === "0")) {} //do nothing. this would just be an insignificant number and its the shortest way to fix this input
@@ -96,7 +103,7 @@ numbers.forEach(e => {
                 displayNew(firstOperand);
             }
         } else {
-            if(firstResultDisplay) {
+            if (firstResultDisplay) {
                 firstResultDisplay = false;
                 secondOperand = "";
                 dotExistOpTwo = false;
@@ -108,7 +115,7 @@ numbers.forEach(e => {
             displayNew(secondOperand);
         }
 
-        
+
     });
 });
 
@@ -120,19 +127,14 @@ operators.forEach(e => {
         if (!isEmpty) {
             desiredOperator = e.id;
 
-            /*if (firstResultDisplay) {
-                firstResultDisplay = false;
-                secondOperand = "";
-                dotExistOpTwo = false;
-                console.log("hola")
-            }*/
-
+            //If last operator exists, lets get it back to its original color
             if (desiredOperatorPrevious !== undefined) {
                 let desOpElement = document.querySelector("#" + desiredOperatorPrevious);
-                desOpElement.style.backgroundColor = "gray";
+                desOpElement.style.backgroundColor = BUTTON_INACTIVE_COLOR;
             }
-            
-            if(/*(desiredOperatorPrevious !== desiredOperator) && */(secondOperand !== "")) {
+
+            //If there is still a second operand and previously the equal button was not pressed, calculate the input
+            if ((secondOperand !== "") && (eqButtonPressed === false)) {
                 operate(firstOperand, secondOperand, desiredOperatorPrevious);
             }
 
@@ -140,7 +142,7 @@ operators.forEach(e => {
             dotExistOpTwo = false;
 
             desiredOperatorElement = document.querySelector("#" + e.id);
-            desiredOperatorElement.style.backgroundColor = "indigo"; //placeholder color (no palette atm)
+            desiredOperatorElement.style.backgroundColor = BUTTON_ACTIVE_COLOR; //placeholder color (no palette atm)
 
             desiredOperatorPrevious = desiredOperator;
 
@@ -151,9 +153,7 @@ operators.forEach(e => {
 
 //all clear button
 ac.addEventListener("click", (e) => {
-
     resetDisplay();
-
 });
 
 //reverse button
@@ -166,6 +166,7 @@ let equalButton = document.querySelector("#equal").addEventListener("click", (e)
     if ((firstOperand !== "") && (secondOperand !== "")) {
         operate(firstOperand, secondOperand, desiredOperator);
     }
+    eqButtonPressed = true;
 });
 
 //percentage button
@@ -177,8 +178,8 @@ let percentageButton = document.querySelector("#percentage").addEventListener("c
 
 //dot/decimal button
 let dotButton = document.querySelector("#dot").addEventListener("click", (e) => {
-    if ((desiredOperator !== "") && (dotExistOpTwo === false)) {
-        if(firstResultDisplay) {
+    if ((desiredOperator !== "") && (dotExistOpTwo === false)) { //If the desired operator does exist, this means that the second operand is being inputted
+        if (firstResultDisplay) { //Check if a result was already displayed so we know the dot is the first character that will be inputted
             secondOperand = ".";
             firstResultDisplay = false;
         } else {
@@ -186,13 +187,13 @@ let dotButton = document.querySelector("#dot").addEventListener("click", (e) => 
         }
         dotExistOpTwo = true;
         console.log("dot2");
-        
+
         displayNew(secondOperand);
-    } else if(dotExistOpOne === false){
+    } else if (dotExistOpOne === false) {
         firstOperand += ".";
         dotExistOpOne = true;
         console.log("dot1");
-        
+
         displayNew(firstOperand);
     }
     //displayNew(".");
