@@ -2,8 +2,7 @@
 Own solution for the calculator project in The Odin Project!
 
 Missing:
--Keyboard support
--Styling
+-Backspace button
 
 Features:
 -Check if there are repeated dots
