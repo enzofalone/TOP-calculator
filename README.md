@@ -5,7 +5,13 @@ Missing:
 -Backspace button
 
 Features:
--Check if there are repeated dots
--Pressing an operator after having a second operand returns a result in the display
+
+-check if there are repeated dots
+
+-pressing an operator after having a second operand returns a result in the display
+
 -functional plus/minus button
+
 -functional percentage button
+
+-get keyboard support
