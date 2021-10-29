@@ -1,6 +1,8 @@
 # calculator
 Own solution for the calculator project in The Odin Project!
 
+Live preview: https://enzofalone.github.io/calculator/
+
 Missing:
 -Backspace button
 
