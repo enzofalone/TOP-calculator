@@ -38,70 +38,78 @@ let eqButtonPressed = false;
 //elements
 let ac = document.querySelector("#ac");
 
-function displayNew(val) {
-    if (!afterOperator) {
-        if (display.innerHTML === "0") {
-            isEmpty = false;
-            display.innerHTML = val;
-        } else {
-            if (firstResultDisplay) {
-                display.innerHTML = val;
-                firstResultDisplay = false;
-            } else {
-                display.innerHTML = val;
-            }
-        }
-    } else {
-        afterOperator = false;
-        display.innerHTML = val;
-    }
-
-    ac.innerHTML = "C";
-}
-
-//Function in charge of clearing the display and variables
-function resetDisplay() {
-    if (desiredOperatorElement !== undefined) {
-        desiredOperatorElement = document.querySelector("#" + desiredOperator);
-        desiredOperatorElement.style.backgroundColor = BUTTON_INACTIVE_COLOR;
-        desiredOperatorElement = undefined;
-    }
-
-    firstOperand = "";
-    secondOperand = "";
-    desiredOperator = "";
-    desiredOperatorPrevious = undefined;
-    display.innerHTML = "0";
-    isEmpty = true;
-    dotExistOpOne = false;
-    dotExistOpTwo = false;
-    ac.innerHTML = "AC";
-}
-
-function displayResult(val) {
-    firstOperand = val; //let the first operand be the result so the user can keep inputting more operations
-
-    display.innerHTML = val;
-
-    firstResultDisplay = true;
-    console.log("result!");
-}
-
-//numbers button
-numbers = document.querySelectorAll(".number");
-
-numbers.forEach(e => {
-    e.addEventListener("click", (i) => {
-        eqButtonPressed = false;
-        //e.classList.add("button-click")
-        if (desiredOperator === "") {
-            if ((firstOperand === "") && (e.innerHTML === "0")) {} //do nothing. this would just be an insignificant number and its the shortest way to fix this input
-            else {
+window.onload = function () {
+    function displayNew(val) {
+        if (!afterOperator) {
+            if (display.innerHTML === "0") {
                 isEmpty = false;
-                firstOperand += e.innerHTML;
+                display.innerHTML = val;
+            } else {
+                if (firstResultDisplay) {
+                    display.innerHTML = val;
+                    firstResultDisplay = false;
+                } else {
+                    display.innerHTML = val;
+                }
+            }
+        } else {
+            afterOperator = false;
+            display.innerHTML = val;
+        }
+
+        ac.innerHTML = "C";
+    }
+
+    //Function in charge of clearing the display and variables
+    function resetDisplay() {
+        if (desiredOperatorElement !== undefined) {
+            desiredOperatorElement = document.querySelector("#" + desiredOperator);
+            desiredOperatorElement.style.backgroundColor = BUTTON_INACTIVE_COLOR;
+            desiredOperatorElement = undefined;
+        }
+
+        firstOperand = "";
+        secondOperand = "";
+        desiredOperator = "";
+        desiredOperatorPrevious = undefined;
+        display.innerHTML = "0";
+        isEmpty = true;
+        dotExistOpOne = false;
+        dotExistOpTwo = false;
+        ac.innerHTML = "AC";
+    }
+
+    function displayResult(val) {
+        firstOperand = val; //let the first operand be the result so the user can keep inputting more operations
+
+        display.innerHTML = val;
+
+        firstResultDisplay = true;
+        console.log("result!");
+    }
+
+    //numbers button
+    numbers = document.querySelectorAll(".number");
+
+    numbers.forEach(e => {
+        e.addEventListener("click", (e) => numberInput(e, undefined));
+    });
+
+    function numberInput(e, keyboard) {
+        eqButtonPressed = false;
+
+        if (desiredOperator === "") {
+            isEmpty = false;
+            if (keyboard === undefined) {
+                firstOperand += e.currentTarget.innerHTML;
+                console.log("first operand: " + firstOperand);
+                displayNew(firstOperand);
+            } else {
+                firstOperand += keyboard;
                 console.log("first operand: " + firstOperand);
                 displayNew(firstOperand);
             }
+
         } else {
             if (firstResultDisplay) {
                 firstResultDisplay = false;
@@ -110,22 +118,31 @@ numbers.forEach(e => {
                 //horrible fix
                 display.innerHTML = "";
             }
-            secondOperand += e.innerHTML;
-            console.log("second operand: " + secondOperand);
-            displayNew(secondOperand);
+
+            if (keyboard === undefined) {
+                secondOperand += e.innerHTML;
+                displayNew(secondOperand);
+            } else {
+                secondOperand += keyboard;
+                displayNew(secondOperand);
+            }
         }
-
-
+    }
+    //operators button
+    let operators = document.querySelectorAll(".operator");
+    operators.forEach(e => {
+        e.addEventListener("click", operatorInput);
     });
-});
 
-//operators button
-let operators = document.querySelectorAll(".operator");
-operators.forEach(e => {
-    e.addEventListener("click", () => {
+    function operatorInput(e, keyboard) {
         console.log(isEmpty);
         if (!isEmpty) {
-            desiredOperator = e.id;
+
+            if (e !== undefined) {
+                desiredOperator = e.currentTarget.id;
+            } else {
+                desiredOperator = keyboard;
+            }
 
             //If last operator exists, lets get it back to its original color
             if (desiredOperatorPrevious !== undefined) {
@@ -141,83 +158,145 @@ operators.forEach(e => {
             secondOperand = "";
             dotExistOpTwo = false;
 
-            desiredOperatorElement = document.querySelector("#" + e.id);
+            desiredOperatorElement = document.querySelector("#" + desiredOperator);
             desiredOperatorElement.style.backgroundColor = BUTTON_ACTIVE_COLOR; //placeholder color (no palette atm)
 
             desiredOperatorPrevious = desiredOperator;
 
             afterOperator = true; //variable set true in order to clear the display when inputting the second operand
         }
+    }
+
+    //all clear button
+    ac.addEventListener("click", (e) => {
+        resetDisplay();
     });
-});
 
-//all clear button
-ac.addEventListener("click", (e) => {
-    resetDisplay();
-});
+    //reverse button
+    let reverseButton = document.querySelector("#reverse").addEventListener("click", (e) => {
+        operate(display.innerHTML, -1, "multiply");
+    });
 
-//reverse button
-let reverseButton = document.querySelector("#reverse").addEventListener("click", (e) => {
-    operate(display.innerHTML, -1, "multiply");
-});
+    //equal button
+    let equalButton = document.querySelector("#equal").addEventListener("click", equalInput);
 
-//equal button
-let equalButton = document.querySelector("#equal").addEventListener("click", (e) => {
-    if ((firstOperand !== "") && (secondOperand !== "")) {
-        operate(firstOperand, secondOperand, desiredOperator);
-    }
-    eqButtonPressed = true;
-});
-
-//percentage button
-let percentageButton = document.querySelector("#percentage").addEventListener("click", (e) => {
-    if (firstOperand !== 0 && desiredOperator == "") {
-        operate(firstOperand, 100, "divide");
-    }
-});
-
-//dot/decimal button
-let dotButton = document.querySelector("#dot").addEventListener("click", (e) => {
-    if ((desiredOperator !== "") && (dotExistOpTwo === false)) { //If the desired operator does exist, this means that the second operand is being inputted
-        if (firstResultDisplay) { //Check if a result was already displayed so we know the dot is the first character that will be inputted
-            secondOperand = ".";
-            firstResultDisplay = false;
-        } else {
-            secondOperand += ".";
+    function equalInput() {
+        if ((firstOperand !== "") && (secondOperand !== "")) {
+            operate(firstOperand, secondOperand, desiredOperator);
         }
-        dotExistOpTwo = true;
-        console.log("dot2");
-
-        displayNew(secondOperand);
-    } else if (dotExistOpOne === false) {
-        firstOperand += ".";
-        dotExistOpOne = true;
-        console.log("dot1");
-
-        displayNew(firstOperand);
-    }
-    //displayNew(".");
-});
-
-//function that is in charge of sending different parameters to the displayResult function with the desired calculations
-function operate(operand1, operand2, operator) {
-    let floatOperand1 = parseFloat(operand1);
-    let floatOperand2 = parseFloat(operand2);
-
-    if (operator === "add") {
-        displayResult(floatOperand1 + floatOperand2);
-    }
-    if (operator === "subtract") {
-        displayResult(floatOperand1 - floatOperand2);
-    }
-    if (operator === "divide") {
-        displayResult(floatOperand1 / floatOperand2);
-    }
-    if (operator === "multiply") {
-        displayResult(floatOperand1 * floatOperand2);
+        eqButtonPressed = true;
     }
 
-    if (operator === "percentage") {
-        displayResult((floatOperand1 / floatOperand2) * 100);
+    //percentage button
+    let percentageButton = document.querySelector("#percentage").addEventListener("click", percentageInput);
+
+    function percentageInput() {
+        if ((firstOperand !== 0) && (desiredOperator == "")) {
+            operate(firstOperand, 100, "divide");
+        }
     }
+
+    //dot/decimal button
+    let dotButton = document.querySelector("#dot").addEventListener("click", (e) => {
+        if ((desiredOperator !== "") && (dotExistOpTwo === false)) { //If the desired operator does exist, this means that the second operand is being inputted
+            if (firstResultDisplay) { //Check if a result was already displayed so we know the dot is the first character that will be inputted
+                secondOperand = ".";
+                firstResultDisplay = false;
+            } else {
+                secondOperand += ".";
+            }
+            dotExistOpTwo = true;
+            console.log("dot2");
+
+            displayNew(secondOperand);
+        } else if (dotExistOpOne === false) {
+            firstOperand += ".";
+            dotExistOpOne = true;
+            console.log("dot1");
+
+            displayNew(firstOperand);
+        }
+    });
+
+    //function that is in charge of sending different parameters to the displayResult function with the desired calculations
+    function operate(operand1, operand2, operator) {
+        let floatOperand1 = parseFloat(operand1);
+        let floatOperand2 = parseFloat(operand2);
+
+        if (operator === "add") {
+            displayResult(floatOperand1 + floatOperand2);
+        }
+        if (operator === "subtract") {
+            displayResult(floatOperand1 - floatOperand2);
+        }
+        if (operator === "divide") {
+            displayResult(floatOperand1 / floatOperand2);
+        }
+        if (operator === "multiply") {
+            displayResult(floatOperand1 * floatOperand2);
+        }
+
+        if (operator === "percentage") {
+            displayResult((floatOperand1 / floatOperand2) * 100);
+        }
+    }
+
+    //KEYBOARD SUPPORT
+    let ctrlKey = false;
+
+    document.addEventListener('keydown', (event) => {
+        let key = event.key;
+        let repeat = event.repeat;
+
+        if ((!ctrlKey) && (key === "Control")) {
+            ctrlKey = true;
+        }
+
+        if (!repeat) {
+            console.log(key);
+            if (!isNaN(parseInt(key))) {
+                numberInput(undefined, key);
+            }
+
+            if (key === "Escape") {
+                resetDisplay();
+            }
+
+            if (key === "Backspace") {
+                //yet to add
+            }
+
+            if (key === "+") {
+                operatorInput(undefined, "add");
+            }
+
+            if (key === "-") {
+                operatorInput(undefined, "subtract");
+            }
+
+            if (key === "*") {
+                operatorInput(undefined, "multiply");
+            }
+
+            if (key === "/") {
+                operatorInput(undefined, "divide");
+            }
+
+            if (key === "%") {
+
+            }
+
+            if (key === "Enter") {
+                equalInput();
+            }
+        }
+
+    });
+
+    document.addEventListener("keyup", (event) => {
+        let key = event.key;
+        if ((!ctrlKey) && (key === "Control")) {
+            ctrlKey = false;
+        }
+    })
 }
