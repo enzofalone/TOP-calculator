@@ -120,7 +120,7 @@ window.onload = function () {
             }
 
             if (keyboard === undefined) {
-                secondOperand += e.innerHTML;
+                secondOperand += e.currentTarget.innerHTML;
                 displayNew(secondOperand);
             } else {
                 secondOperand += keyboard;
