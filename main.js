@@ -197,7 +197,9 @@ window.onload = function () {
     }
 
     //dot/decimal button
-    let dotButton = document.querySelector("#dot").addEventListener("click", (e) => {
+    let dotButton = document.querySelector("#dot").addEventListener("click", dotInput);
+
+    function dotInput() {
         if ((desiredOperator !== "") && (dotExistOpTwo === false)) { //If the desired operator does exist, this means that the second operand is being inputted
             if (firstResultDisplay) { //Check if a result was already displayed so we know the dot is the first character that will be inputted
                 secondOperand = ".";
@@ -216,7 +218,7 @@ window.onload = function () {
 
             displayNew(firstOperand);
         }
-    });
+    }
 
     //function that is in charge of sending different parameters to the displayResult function with the desired calculations
     function operate(operand1, operand2, operator) {
@@ -283,7 +285,11 @@ window.onload = function () {
             }
 
             if (key === "%") {
+                percentageInput();
+            }
 
+            if (key === ".") {
+                dotInput();
             }
 
             if (key === "Enter") {
